@@ -1,0 +1,165 @@
+body {
+  width: 100%;
+  height: 100%;
+  background-color:rgb(255, 255, 255);
+
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+} 
+
+header {
+  width: 100%;
+}
+
+img {
+  width: 150px;
+  float: left;
+  margin-top: 8px;
+}
+
+
+ul{
+  background-color: rgb(196, 191, 191);
+
+  width: 80%;
+  overflow: hidden;
+  position: relative;
+  list-style-type: none;
+  /* left: 20px;
+
+  padding-block-start: 10px;
+  padding-block-end: 10px;
+  padding-left: 50px;
+  padding-right: 0px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+
+  font-size: 20px; */
+
+  left: 2%;
+
+  padding-block-start: 1%;
+  padding-block-end: 1%;
+  padding-left: 5%;
+  padding-right: 0%;
+  padding-top: 0.8%;
+  padding-bottom: 0.8%;
+
+  font-size: 2%;
+
+}
+
+
+li {
+  float: left;
+  color: white;
+  text-align: center; 
+  /* padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 15px;
+  padding-bottom: 15px; */
+  text-decoration: none;
+  font-size: 20pt;
+  width: 20%;
+  position: relative;
+
+  padding-left: 1.5%;
+  padding-right: 1.5%;
+  padding-top: 1.5%;
+  padding-bottom: 1.5%; 
+  
+}  
+
+
+li:hover {
+    background-color: #111;
+}
+
+li.active {
+  background-color: #111;
+  color: white;
+
+}
+
+#fix{
+  width: 100%;
+  height: 100%;
+  float: right;
+  zoom: 100%;
+}
+
+.line{
+ 
+  border-color: black;
+  border-right-style: solid;
+
+}
+
+/* .hide{
+  display: none;
+  border-width: 1px;
+  border-color:black;
+  border-right-style: solid;
+
+  float: left;
+  width: 200px;
+  padding: 0.5em;
+
+}*/
+
+
+ 
+
+/* .search{
+  display: inline-inside;
+  position: absolute;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  zoom: 200%;
+  margin-top: 70px;
+  margin-left: 300px;
+
+} */
+
+.deselection {
+  background-color: rgb(196, 191, 191);
+  color: white;
+
+
+}
+
+.time {
+  display: inline-inside;
+  position: relative;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  margin-left: 5%;
+
+}
+
+.selector{
+  width: 20%;
+  display: inline-block;
+  border-width: 1px;
+  border-color: black;
+  border-right-style: solid;
+  position: fixed;
+  flex-direction: column;
+  position: absolute;
+  margin-left: 0%;
+}
+
+.plot{
+  position: relative;
+  margin-left: 22%;
+  margin-top: 2%;
+  margin-right: -15%;
+  width: 30%;
+  height: 100%;
+
+}
