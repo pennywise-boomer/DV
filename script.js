@@ -26,147 +26,109 @@ function clearPage() {
 
 function generate_pies(glob_year, subgroups){
  
-  var width = 400
-      height = 400
-      margin = 40
+      var width = 400
+          height = 400
+          margin = 40
+      var radius = Math.min(width, height) / 2 - margin
+    iscr_per_year = iscrizioni.filter(d => d.ANAC_ISCR == glob_year);
+    var counts = d3.rollup(iscr_per_year, v => [v.length, v[0].COLOR] , d => d.DECO_AREA);
+    counts = Array.from(counts);
 
-  var radius = Math.min(width, height) / 2 - margin
+    var perc = new Array(11);
 
-  // var color = d3.scaleOrdinal()
-  //     .domain([9, 30])
-  //     .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"]);
+    for (var k = 0; k < 11; k++)
+    {
+      perc[k] = counts[k][1][0];
+    }
 
-iscr_per_year = iscrizioni.filter(d => d.ANAC_ISCR == glob_year);
-// iscr_per_year_per_studies = iscrizioni.filter(d => d.ANAC_ISCR == glob_year);
-var counts = d3.rollup(iscr_per_year, v => v.length, d => d.DECO_AREA);
+    console.log(perc);
 
+    var pie = d3.pie().value(d => d[1][0]); //prendo counts per scuola ["lettere e filosofia",(counts, colore)]
 
-//var counts = d3.groups(iscr_per_year, d => d.DECO_AREA);
+    var data_ready = pie(counts);
+    console.log(data_ready);
+    var arcGenerator = d3.arc().innerRadius(0).outerRadius(radius);
+    var g = d3.select("#fix")
+          .append("svg")
+          .attr('class', 'plot')
+          .attr('id', 'graph')
+          .append("g")
+          .attr('id', 'torta')
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+    g.selectAll('path')
+          .data(data_ready)
+          .enter()
+          .append('path')
+          .attr('d', arcGenerator)
+          .attr('fill', d => d.data[1][1]) //prendo colore per scuola ["lettere e filosofia",(counts, colore)]
+          .attr("stroke", "black")
+          .style("stroke-width", "2px")
+          .style("opacity", 0.7);
 
-counts = Array.from(counts);
-console.log(counts);
+      g.selectAll('text')
+          .data(data_ready)
+          .enter()
+          .append('text')
+          .text(d => d.data[1][0])
+          .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
+          .style("text-anchor", "middle")
+        .style("font-size", 17);
 
-// for (i = 0; i < counts.length; i++){
-// counts[i][1] = Array.from(counts[i][1]);
-// }
-//console.log(counts);
-
-// var counts_vec = {};
-// var i;
-//   for (i = 0; i < counts.length; i++){
-
-//  counts_vec[String(counts[i][0])] = [counts[i][1][0][1], counts[i][1][0][0]];
-// }
-
-// console.log(counts_vec);
-
-
-// var pie1 = d => d.entries();
-
-//  var data_ready1 = pie1(counts);
-
-//  console.log(data_ready1);
-
-
- var pie = d3.pie()
-  .value(d => d);
-
-
-
- var data_ready = pie(counts);
-
- console.log(data_ready);
-
-var arcGenerator = d3.arc().innerRadius(0).outerRadius(radius);
-
-var g = d3.select("#fix")
-      .append("svg")
-      .attr('class', 'plot')
-      .attr('id', 'graph')
-      .append("g")
-      .attr('id', 'torta')
-      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
-g.selectAll('path')
-       .data(data_ready)
-       .enter()
-      .append('path')
-      .attr('d', arcGenerator)
-      .attr('fill', d =>  })
-      .attr("stroke", "black")
-      .style("stroke-width", "2px")
-      .style("opacity", 0.7);
-
-  // g.selectAll('text')
-  //     .data(data_ready)
-  //     .enter()
-  //     .append('text')
-  //    // .text(function(d){ return d[0]})
-  //     .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
-  //     .style("text-anchor", "middle")
-  //    .style("font-size", 17);
+      g.selectAll("circle")
+      .data(area_colors)
+      .enter()
+      .append("circle")
+      .attr("cx", d => 10)
+      .attr("cy",200)
+      .attr("r", 6)
+      .style("fill", d => d.value);
+    // svg.append("text").attr("x", 220).attr("y", 130).text("variable A").style("font-size", "15px").attr("alignment-baseline","middle")
+    }
 
 
-  g.selectAll("circle")
-  .data(area_colors)
-  .enter()
-  .append("circle")
-  .attr("cx",200)
-  .attr("cy",160)
-  .attr("r", 6)
-  .style("fill", d => d.value)
-  
- // svg.append("text").attr("x", 220).attr("y", 130).text("variable A").style("font-size", "15px").attr("alignment-baseline","middle")
-     
+    //*********************************************************************** */
 
 
 
-}
+    function timeline() {
 
 
-//*********************************************************************** */
+      var history_years = [[1481, 10], [1569, 25], [1777,40], [1781,55], [1784,70], [1870,85], [2021,100]];
 
+    var time_dots = d3.scaleLinear()
+        .domain([1481, 2021])
+        .range([0,100]);
+        
+      d3.select("#fix")
+        .append("svg")
+        .attr("id", "chart")
+        .attr("class", "time")
+        .attr("viewBox", "0 0 120 80")
+      // .attr("zoom", "3000%")
+        .append("g")
+        .append("polyline")
+        .attr("fill", "none")
+        .attr("stroke", "gray")
+        .attr("stroke-width", "1")
+        .attr("points", "0, 20 110, 20");
 
+      g =  d3.select("#chart")
+        .selectAll(".dots")
+        .data(history_years)
+        .enter()
+        .append("g");
 
-function timeline() {
+      g.attr("id", ".dots")
+        .append("circle", "text")
+        .attr("cx", d => {return d[1]})
+        .attr("cy", "20")
+        .attr("r", "1");
 
-
-  var history_years = [[1481, 10], [1569, 25], [1777,40], [1781,55], [1784,70], [1870,85], [2021,100]];
-
-var time_dots = d3.scaleLinear()
-     .domain([1481, 2021])
-     .range([0,100]);
-    
-  d3.select("#fix")
-    .append("svg")
-    .attr("id", "chart")
-    .attr("class", "time")
-    .attr("viewBox", "0 0 120 80")
-   // .attr("zoom", "3000%")
-    .append("g")
-    .append("polyline")
-    .attr("fill", "none")
-    .attr("stroke", "gray")
-    .attr("stroke-width", "1")
-    .attr("points", "0, 20 110, 20");
-
-  g =  d3.select("#chart")
-    .selectAll(".dots")
-    .data(history_years)
-    .enter()
-    .append("g");
-
-  g.attr("id", ".dots")
-    .append("circle", "text")
-    .attr("cx", d => {return d[1]})
-    .attr("cy", "20")
-    .attr("r", "1");
-
-  g.append("text")
-    .text(d => {return d[0]})
-    .attr("x", d => {return d[1] - 2} )
-    .attr("y", 25)
-    .attr("font-size", "2px");
+      g.append("text")
+        .text(d => {return d[0]})
+        .attr("x", d => {return d[1] - 2} )
+        .attr("y", 25)
+        .attr("font-size", "2px");
 
 }
 
@@ -304,82 +266,78 @@ Promise.all([
 });
  
 Promise.all([
-  d3.csv("/data/iscrizioni1.csv"),
-  d3.csv("/data/iscrizioni2.csv"),
-  d3.csv("/data/iscrizioni3.csv"),
-  d3.csv("/data/iscrizioni4.csv"),
-  d3.csv("/data/iscrizioni5.csv"),
-  d3.csv("/data/iscrizioni6.csv"),
-]).then(function(allData) {
-  iscrizioni = d3.merge(allData);
+    d3.csv("/data/iscrizioni1.csv"),
+    d3.csv("/data/iscrizioni2.csv"),
+    d3.csv("/data/iscrizioni3.csv"),
+    d3.csv("/data/iscrizioni4.csv"),
+    d3.csv("/data/iscrizioni5.csv"),
+    d3.csv("/data/iscrizioni6.csv"),
+  ]).then(function(allData) {
+    iscrizioni = d3.merge(allData);
 
 
 
 
 
 
-// for (i = 0; i < iscrizioni.length; i++){
+  for (i = 0; i < iscrizioni.length; i++){
 
-//   //lettere e filosofia
-//   if (iscrizioni[i].COD_AREA == 4) {
-//     iscrizioni[i]['COLOR'] = "rgb(183,154,129)"; 
-//    }
+    //lettere e filosofia
+    if (iscrizioni[i].COD_AREA == 4) {
+      iscrizioni[i]['COLOR'] = "rgb(183,154,129)"; 
+    }
 
-//    // giurisprudenza
-//    if (iscrizioni[i].COD_AREA == 1) {
-//     iscrizioni[i]['COLOR'] = "rgb(0,97,160)"; 
-//    }
+    // giurisprudenza
+    if (iscrizioni[i].COD_AREA == 1) {
+      iscrizioni[i]['COLOR'] = "rgb(0,97,160)"; 
+    }
 
-//    // scienze politiche
-//    if (iscrizioni[i].COD_AREA == 2) {
-//     iscrizioni[i]['COLOR'] = "rgb(0, 167, 181)"; 
-//    }  
+    // scienze politiche
+    if (iscrizioni[i].COD_AREA == 2) {
+      iscrizioni[i]['COLOR'] = "rgb(0, 167, 181)"; 
+    }  
 
-//    // ingegneria
-//    if (iscrizioni[i].COD_AREA == 9) {
-//     iscrizioni[i]['COLOR'] = "rgb(87, 70, 118)"; 
-//    }
+    // ingegneria
+    if (iscrizioni[i].COD_AREA == 9) {
+      iscrizioni[i]['COLOR'] = "rgb(87, 70, 118)"; 
+    }
 
-//    // architettura e design
-//    if (iscrizioni[i].COD_AREA == 10) {
-//     iscrizioni[i]['COLOR'] = "rgb(244, 99, 58)"; 
-//    }
+    // architettura e design
+    if (iscrizioni[i].COD_AREA == 10) {
+      iscrizioni[i]['COLOR'] = "rgb(244, 99, 58)"; 
+    }
 
-//    // scienze MFN
-//    if (iscrizioni[i].COD_AREA == 7) {
-//     iscrizioni[i]['COLOR'] = "rgb(0, 124, 88)"; 
-//    }
+    // scienze MFN
+    if (iscrizioni[i].COD_AREA == 7) {
+      iscrizioni[i]['COLOR'] = "rgb(0, 124, 88)"; 
+    }
 
-//    //farmacia
-//    if (iscrizioni[i].COD_AREA == 8) {
-//     iscrizioni[i]['COLOR'] = "rgb(224, 164, 161)"; 
-//    }
+    //farmacia
+    if (iscrizioni[i].COD_AREA == 8) {
+      iscrizioni[i]['COLOR'] = "rgb(224, 164, 161)"; 
+    }
 
-//    //lingue e culture moderne
-//    if (iscrizioni[i].COD_AREA == 27) {
-//     iscrizioni[i]['COLOR'] = "rgb(164, 188, 194)"; 
-//    }
+    //lingue e culture moderne
+    if (iscrizioni[i].COD_AREA == 27) {
+      iscrizioni[i]['COLOR'] = "rgb(164, 188, 194)"; 
+    }
 
-//    // medicina
-//    if (iscrizioni[i].COD_AREA == 6) {
-//     iscrizioni[i]['COLOR'] = "rgb(239, 51, 64)"; 
-//    }
+    // medicina
+    if (iscrizioni[i].COD_AREA == 6) {
+      iscrizioni[i]['COLOR'] = "rgb(239, 51, 64)"; 
+    }
 
-// // economia
-//    if (iscrizioni[i].COD_AREA == 28) {
-//     iscrizioni[i]['COLOR'] = "rgb(241, 196, 0)"; 
-//    }
+  // economia
+    if (iscrizioni[i].COD_AREA == 28) {
+      iscrizioni[i]['COLOR'] = "rgb(241, 196, 0)"; 
+    }
 
-//    // scienze formazione
-//    if (iscrizioni[i].COD_AREA == 5) {
-//     iscrizioni[i]['COLOR'] = "rgb(155, 50, 89)"; 
-//    }
+    // scienze formazione
+    if (iscrizioni[i].COD_AREA == 5) {
+      iscrizioni[i]['COLOR'] = "rgb(155, 50, 89)"; 
+    }
 
- //}
-
-
-  //console.log(iscrizioni);
-
+  }
 });
  
 Promise.all([
