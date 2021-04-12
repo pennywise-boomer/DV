@@ -31,8 +31,12 @@ function generate_pies(glob_year, subgroups){
           margin = 40
       var radius = Math.min(width, height) / 2 - margin
     iscr_per_year = iscrizioni.filter(d => d.ANAC_ISCR == glob_year);
-    var counts = d3.rollup(iscr_per_year, v => [v.length, v[0].COLOR] , d => d.DECO_AREA);
+  
+
+    var counts = d3.rollup(iscr_per_year, v => [v.length, v[0].COLOR] , function(d) {if(d.DECO_AREA != 'undefined') return d.DECO_AREA});
+    console.log(counts);
     counts = Array.from(counts);
+
 
     var perc = new Array(11);
 
@@ -41,12 +45,12 @@ function generate_pies(glob_year, subgroups){
       perc[k] = counts[k][1][0];
     }
 
-    console.log(perc);
+    sum = d3.sum(perc);
+
 
     var pie = d3.pie().value(d => d[1][0]); //prendo counts per scuola ["lettere e filosofia",(counts, colore)]
 
     var data_ready = pie(counts);
-    console.log(data_ready);
     var arcGenerator = d3.arc().innerRadius(0).outerRadius(radius);
     var g = d3.select("#fix")
           .append("svg")
@@ -69,21 +73,43 @@ function generate_pies(glob_year, subgroups){
           .data(data_ready)
           .enter()
           .append('text')
-          .text(d => d.data[1][0])
+          .text(d => Math.round(d.data[1][0]/sum * 100))
           .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
           .style("text-anchor", "middle")
         .style("font-size", 17);
 
-      g.selectAll("circle")
-      .data(area_colors)
-      .enter()
-      .append("circle")
-      .attr("cx", d => 10)
-      .attr("cy",200)
-      .attr("r", 6)
-      .style("fill", d => d.value);
-    // svg.append("text").attr("x", 220).attr("y", 130).text("variable A").style("font-size", "15px").attr("alignment-baseline","middle")
-    }
+        console.log(counts);
+        console.log(data_ready);
+
+      // g.selectAll("circle")
+      // .data(data_ready)
+      // .enter()
+      // .append("circle")
+      // .attr("x", 20)
+      // .attr("y", function(d,i){ return 200 + i*25})
+      // .style("fill", d => d.data[1][1]);
+
+      g.selectAll("mydots")
+    .data(data_ready)
+    .enter()
+    .append("circle")
+    .attr("cx", -90)
+    .attr("cy", function(d,i){ return 200 + i*25}) // 100 is where the first dot appears. 25 is the distance between dots
+    .attr("r", 7)
+    .style("fill", d => d.data[1][1])
+
+// Add one dot in the legend for each name.
+    g.selectAll("mylabels")
+    .data(data_ready)
+    .enter()
+    .append("text")
+    .attr("x", -80)
+    .attr("y", function(d,i){ return 200 + i*25}) // 100 is where the first dot appears. 25 is the distance between dots
+    .style("fill", d => d.data[1][1])
+    .text(d => d.data[0])
+    .attr("text-anchor", "left")
+    .style("alignment-baseline", "middle")
+     }
 
 
     //*********************************************************************** */
@@ -165,13 +191,15 @@ function years_option(){
     update(+this.value);
   });
 
-update(2020);
+update(2010);
 
 function update(glob_year) {
 
   //glob_year = year
+  d3.select('#graph').remove();
   d3.select("#input_year").attr("value", glob_year );
   generate_pies(glob_year, "1");
+
 
 }
 }
