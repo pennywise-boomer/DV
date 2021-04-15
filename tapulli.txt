@@ -1,1 +1,2 @@
 1. limitato range di counts in modo da ignorare le stringhe vuote linea js 42
+2. barra di scroll non si adatta al cambio zoom in relazione alla pie chart
